@@ -9,7 +9,8 @@ import (
 // LocalFragmentDesc is a structure describing an iterum fragment
 // and how it is stored on the program's machine's local volume
 type LocalFragmentDesc struct {
-	Files []LocalFileDesc `json:"files"`
+	Files    []LocalFileDesc `json:"files"`
+	Metadata *LocalMetadata  `json:"metadata"` // Additional information on this fragment
 }
 
 // Serialize tries to transform `f` into a json encoded bytearray. Errors on failure

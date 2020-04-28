@@ -36,7 +36,7 @@ func (config Config) _putFile(localFile desc.LocalFileDesc, putMechanism func() 
 func (config Config) PutFileFromReader(fileHandle io.ReadCloser, localFile desc.LocalFileDesc) (remoteFile desc.RemoteFileDesc, err error) {
 	putMechanism := func() (err error) {
 		defer fileHandle.Close()
-		_, err = config.Client.PutObject(config.TargetBucket, localFile.ToRemotePath(""), fileHandle, -1, config.PutOptions)
+		_, err = config.Client.PutObject(config.TargetBucket, localFile.ToRemotePath("iterum"), fileHandle, -1, config.PutOptions)
 		return
 	}
 	return config._putFile(localFile, putMechanism)
@@ -47,7 +47,7 @@ func (config Config) PutFileFromReader(fileHandle io.ReadCloser, localFile desc.
 // filePath is the target remote path
 func (config Config) PutFile(localFile desc.LocalFileDesc) (remoteFile desc.RemoteFileDesc, err error) {
 	putMechanism := func() (err error) {
-		_, err = config.Client.FPutObject(config.TargetBucket, localFile.ToRemotePath(""), localFile.LocalPath, config.PutOptions)
+		_, err = config.Client.FPutObject(config.TargetBucket, localFile.ToRemotePath("iterum"), localFile.LocalPath, config.PutOptions)
 		return
 	}
 	return config._putFile(localFile, putMechanism)
