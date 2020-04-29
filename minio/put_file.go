@@ -23,7 +23,7 @@ func (config Config) _putFile(localFile desc.LocalFileDesc, putMechanism func() 
 
 	remoteFile = desc.RemoteFileDesc{
 		Name:       localFile.Name,
-		RemotePath: localFile.ToRemotePath(""),
+		RemotePath: localFile.ToRemotePath("iterum"),
 		Bucket:     config.TargetBucket,
 	}
 
