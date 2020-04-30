@@ -8,7 +8,7 @@ import (
 )
 
 // GetFile retrieves the file associated with the RemoteFileDesc onto local disk
-// It ensures that the target bucket exists and otherwise creates it
+// It does not ensure any existing connection neither the bucket. This is the responsibility of the user
 // targetFolder is the folder in which to store the data
 func (config Config) GetFile(descriptor desc.RemoteFileDesc, targetFolder string) (localFile desc.LocalFileDesc, err error) {
 	defer util.ReturnErrOnPanic(&err)()

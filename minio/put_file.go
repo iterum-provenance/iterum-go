@@ -33,10 +33,10 @@ func (config Config) _putFile(localFile desc.LocalFileDesc, putMechanism func() 
 // PutFileFromReader send the data associated with a fileHandler into the minioStorage
 // It assumes that the target bucket exists and access is granted to it ia the config
 // remotePath is the target remote path to store to. fileName is used in the RemoteFileDesc
-func (config Config) PutFileFromReader(fileHandle io.ReadCloser, localFile desc.LocalFileDesc) (remoteFile desc.RemoteFileDesc, err error) {
+func (config Config) PutFileFromReader(fileHandle io.ReadCloser, contentSize int64, localFile desc.LocalFileDesc) (remoteFile desc.RemoteFileDesc, err error) {
 	putMechanism := func() (err error) {
 		defer fileHandle.Close()
-		_, err = config.Client.PutObject(config.TargetBucket, localFile.ToRemotePath("iterum"), fileHandle, -1, config.PutOptions)
+		_, err = config.Client.PutObject(config.TargetBucket, localFile.ToRemotePath("iterum"), fileHandle, contentSize, config.PutOptions)
 		return
 	}
 	return config._putFile(localFile, putMechanism)
