@@ -9,7 +9,8 @@ import (
 // RemoteFragmentDesc is a structure describing an iterum fragment
 // and how it is stored on the remote minio storage
 type RemoteFragmentDesc struct {
-	Files []RemoteFileDesc `json:"files"`
+	Files    []RemoteFileDesc `json:"files"`
+	Metadata *RemoteMetadata  `json:"metadata"` // Additional information on this fragment
 }
 
 // Serialize tries to transform `f` into a json encoded bytearray. Errors on failure
