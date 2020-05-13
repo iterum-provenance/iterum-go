@@ -2,6 +2,7 @@ package descriptors
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/iterum-provenance/iterum-go/transmit"
 )
@@ -12,9 +13,11 @@ type KillMessage struct {
 	Status string `json:"status"`
 }
 
+const defaultStatus = "complete"
+
 // NewKillMessage creates a new default instance of KillMessage
 func NewKillMessage() KillMessage {
-	return KillMessage{"complete"}
+	return KillMessage{}
 }
 
 // Serialize tries to transform `km` into a json encoded bytearray. Errors on failure
@@ -33,5 +36,9 @@ func (km *KillMessage) Deserialize(data []byte) (err error) {
 	if err != nil {
 		err = transmit.ErrSerialization(err)
 	}
+	if km.Status != defaultStatus {
+		err = transmit.ErrSerialization(fmt.Errorf("Incomplete KillMessage, status not '%v'", defaultStatus))
+	}
+
 	return
 }

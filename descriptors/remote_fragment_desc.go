@@ -10,7 +10,7 @@ import (
 // and how it is stored on the remote minio storage
 type RemoteFragmentDesc struct {
 	Files    []RemoteFileDesc `json:"files"`
-	Metadata *RemoteMetadata  `json:"metadata"` // Additional information on this fragment
+	Metadata RemoteMetadata   `json:"metadata"` // Additional information on this fragment
 }
 
 // Serialize tries to transform `f` into a json encoded bytearray. Errors on failure
@@ -25,9 +25,11 @@ func (rf *RemoteFragmentDesc) Serialize() (data []byte, err error) {
 
 // Deserialize tries to decode a json encoded byte array into `f`. Errors on failure
 func (rf *RemoteFragmentDesc) Deserialize(data []byte) (err error) {
-	err = json.Unmarshal(data, rf)
-	if err != nil {
-		err = transmit.ErrSerialization(err)
+	if err = json.Unmarshal(data, rf); err != nil {
+		return transmit.ErrSerialization(err)
 	}
-	return
+	if err = rf.Metadata.Validate(); err != nil {
+		return transmit.ErrSerialization(err)
+	}
+	return err
 }
