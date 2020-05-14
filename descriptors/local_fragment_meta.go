@@ -6,6 +6,7 @@ import "errors"
 // Mostly used for Iterum internal functioning such as routing
 type LocalMetadata struct {
 	FragmentID    IterumID               `json:"fragment_id"`
+	Predecessors  []IterumID             `json:"predecessors"`
 	OutputChannel *string                `json:"output_channel,omitempty"` // Target output of a transformation step
 	Custom        map[string]interface{} `json:"custom,omitempty"`         // Custom metadata added by and for the user for across transformation steps
 }
