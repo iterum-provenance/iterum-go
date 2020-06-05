@@ -1,11 +1,15 @@
 package env
 
-import "os"
+import (
+	"os"
+	"path"
+)
 
 const (
 	dataVolumePathEnv = "DATA_VOLUME_PATH"
 	nameEnv           = "ITERUM_NAME"
 	configEnv         = "ITERUM_CONFIG"
+	configPathEnv     = "ITERUM_CONFIG_PATH"
 	pipelineHashEnv   = "PIPELINE_HASH"
 	managerURLEnv     = "MANAGER_URL"
 )
@@ -18,6 +22,9 @@ var ProcessName = os.Getenv(nameEnv)
 
 // ProcessConfig contains a stringified JSON object containing config for the target (allowed to be empty)
 var ProcessConfig = os.Getenv(configEnv)
+
+// ProcessConfigPath contains a string/folder pointing to the folder where iterum config files should be stored
+var ProcessConfigPath = path.Join(DataVolumePath, os.Getenv(configPathEnv))
 
 // PipelineHash is the hash associated with this pipeline run
 var PipelineHash = os.Getenv(pipelineHashEnv)
