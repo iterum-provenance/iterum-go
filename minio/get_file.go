@@ -2,9 +2,12 @@ package minio
 
 import (
 	"fmt"
+	"path"
 
 	desc "github.com/iterum-provenance/iterum-go/descriptors"
+	"github.com/iterum-provenance/iterum-go/env"
 	"github.com/iterum-provenance/iterum-go/util"
+	"github.com/prometheus/common/log"
 )
 
 // GetFile retrieves the file associated with the RemoteFileDesc onto local disk
@@ -29,4 +32,17 @@ func (config Config) GetFile(descriptor desc.RemoteFileDesc, targetFolder string
 	}
 
 	return
+}
+
+// GetConfigFile gets the file associated with filename from the minioStorage
+func (config Config) GetConfigFile(filename string) (localFile desc.LocalFileDesc, err error) {
+	descriptor := desc.RemoteFileDesc{
+		Bucket:     configBucket,
+		Name:       filename,
+		RemotePath: path.Join(configPrefix, filename),
+	}
+	if env.ProcessConfigPath == env.DataVolumePath {
+		log.Fatalf("EnvironmentError: '%v' is not a valid value for ITERUM_CONFIG_PATH", env.ProcessConfigPath)
+	}
+	return config.GetFile(descriptor, env.ProcessConfigPath)
 }

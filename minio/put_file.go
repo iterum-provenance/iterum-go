@@ -5,10 +5,18 @@ import (
 	"io"
 
 	desc "github.com/iterum-provenance/iterum-go/descriptors"
+	"github.com/iterum-provenance/iterum-go/env"
 	"github.com/iterum-provenance/iterum-go/util"
 )
 
-func (config Config) _putFile(localFile desc.LocalFileDesc, putMechanism func() (err error)) (remoteFile desc.RemoteFileDesc, err error) {
+const (
+	dataPrefix   string = "iterum_data"
+	configPrefix string = "iterum_config"
+)
+
+var configBucket string = env.PipelineHash + "-ITERUM-CONFIG"
+
+func (config Config) _putFile(localFile desc.LocalFileDesc, putMechanism func() (err error), prefix string) (remoteFile desc.RemoteFileDesc, err error) {
 	defer util.ReturnErrOnPanic(&err)()
 
 	if !config.IsConnected() {
@@ -23,7 +31,7 @@ func (config Config) _putFile(localFile desc.LocalFileDesc, putMechanism func() 
 
 	remoteFile = desc.RemoteFileDesc{
 		Name:       localFile.Name,
-		RemotePath: localFile.ToRemotePath("iterum"),
+		RemotePath: localFile.ToRemotePath(prefix),
 		Bucket:     config.TargetBucket,
 	}
 
@@ -36,10 +44,10 @@ func (config Config) _putFile(localFile desc.LocalFileDesc, putMechanism func() 
 func (config Config) PutFileFromReader(fileHandle io.ReadCloser, contentSize int64, localFile desc.LocalFileDesc) (remoteFile desc.RemoteFileDesc, err error) {
 	putMechanism := func() (err error) {
 		defer fileHandle.Close()
-		_, err = config.Client.PutObject(config.TargetBucket, localFile.ToRemotePath("iterum"), fileHandle, contentSize, config.PutOptions)
+		_, err = config.Client.PutObject(config.TargetBucket, localFile.ToRemotePath(dataPrefix), fileHandle, contentSize, config.PutOptions)
 		return
 	}
-	return config._putFile(localFile, putMechanism)
+	return config._putFile(localFile, putMechanism, dataPrefix)
 }
 
 // PutFile send the file associated with localPath into the minioStorage
@@ -47,8 +55,19 @@ func (config Config) PutFileFromReader(fileHandle io.ReadCloser, contentSize int
 // filePath is the target remote path
 func (config Config) PutFile(localFile desc.LocalFileDesc) (remoteFile desc.RemoteFileDesc, err error) {
 	putMechanism := func() (err error) {
-		_, err = config.Client.FPutObject(config.TargetBucket, localFile.ToRemotePath("iterum"), localFile.LocalPath, config.PutOptions)
+		_, err = config.Client.FPutObject(config.TargetBucket, localFile.ToRemotePath(dataPrefix), localFile.LocalPath, config.PutOptions)
 		return
 	}
-	return config._putFile(localFile, putMechanism)
+	return config._putFile(localFile, putMechanism, dataPrefix)
+}
+
+// PutConfigFile sends the file associated with localPath into the minioStorage
+// in the config bucket of this pipeline run
+func (config Config) PutConfigFile(localFile desc.LocalFileDesc) (remoteFile desc.RemoteFileDesc, err error) {
+	config.TargetBucket = configBucket
+	putMechanism := func() (err error) {
+		_, err = config.Client.FPutObject(config.TargetBucket, localFile.ToRemotePath(configPrefix), localFile.LocalPath, config.PutOptions)
+		return
+	}
+	return config._putFile(localFile, putMechanism, configPrefix)
 }

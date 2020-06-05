@@ -1,5 +1,7 @@
 package descriptors
 
+import "path"
+
 // RemoteFileDesc is a description of a file as found in the Minio storage
 type RemoteFileDesc struct {
 	Name       string `json:"name"`   // Original name as stored in the idv repository
@@ -9,5 +11,5 @@ type RemoteFileDesc struct {
 
 // ToLocalPath converts a RemoteFileDesc into a path on the local disk on where to store it
 func (rfd RemoteFileDesc) ToLocalPath(prefix string) string {
-	return prefix + "/input/" + rfd.Bucket + "/" + rfd.Name
+	return path.Join(prefix, rfd.Bucket, rfd.Name)
 }
