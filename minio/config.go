@@ -8,6 +8,13 @@ import (
 	"github.com/minio/minio-go"
 )
 
+const (
+	dataPrefix   string = "iterum_data"
+	configPrefix string = "iterum_config"
+)
+
+var configBucket string = env.PipelineHash + "-ITERUM-CONFIG"
+
 // Config is a structure holding all relevant information regarding the minio storage used by Iterum
 type Config struct {
 	TargetBucket string

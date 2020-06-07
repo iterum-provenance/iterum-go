@@ -5,16 +5,8 @@ import (
 	"io"
 
 	desc "github.com/iterum-provenance/iterum-go/descriptors"
-	"github.com/iterum-provenance/iterum-go/env"
 	"github.com/iterum-provenance/iterum-go/util"
 )
-
-const (
-	dataPrefix   string = "iterum_data"
-	configPrefix string = "iterum_config"
-)
-
-var configBucket string = env.PipelineHash + "-ITERUM-CONFIG"
 
 func (config Config) _putFile(localFile desc.LocalFileDesc, putMechanism func() (err error), prefix string) (remoteFile desc.RemoteFileDesc, err error) {
 	defer util.ReturnErrOnPanic(&err)()
