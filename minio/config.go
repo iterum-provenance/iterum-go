@@ -13,7 +13,7 @@ const (
 	configPrefix string = "iterum_config"
 )
 
-var configBucket string = env.PipelineHash + "-ITERUM-CONFIG"
+var configBucket string = env.PipelineHash + "-iterum-config"
 
 // Config is a structure holding all relevant information regarding the minio storage used by Iterum
 type Config struct {
