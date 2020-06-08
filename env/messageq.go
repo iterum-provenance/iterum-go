@@ -3,6 +3,8 @@ package env
 import (
 	"os"
 	"strconv"
+
+	"github.com/prometheus/common/log"
 )
 
 const (
@@ -43,7 +45,7 @@ func parsePrefetchCount(envName string) int {
 	if value != "" {
 		parsed, err := strconv.Atoi(value)
 		if err != nil || parsed < 0 {
-			ErrEnvironment(envName, value)
+			log.Fatalln(ErrEnvironment(envName, value))
 		}
 		prefetchCount = parsed
 	}
