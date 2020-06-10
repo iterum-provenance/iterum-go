@@ -6,7 +6,8 @@ import (
 )
 
 // EncodeSend encodes a serializable object via the Iterum defaults:
-//     unsigned 32bit int msg length , followed by the encoded object
+//     unsigned 32bit int msg length, followed by the encoded object
+// If the message size exceeds 2^16 it is send in chunks of 2^16 bytes
 // Then it sends it on the target connection
 func EncodeSend(conn net.Conn, obj Serializable) (err error) {
 	// Encoding
@@ -18,11 +19,30 @@ func EncodeSend(conn net.Conn, obj Serializable) (err error) {
 	size := make([]byte, FragmentSizeLength)
 	binary.LittleEndian.PutUint32(size, uint32(len(data)))
 	data = append(size, data...)
+	dataLen := len(data)
 
-	// Sending
-	_, err = conn.Write(data)
-	if err != nil {
-		return ErrConnection(err)
+	// Setup sending in chunks
+	bytesWrittenTotal := 0
+	lwb := 0
+	maxChunkSize := 65536 // 2^16
+	upb := dataLen
+	if dataLen > maxChunkSize {
+		upb = maxChunkSize
+	}
+
+	// Send all chunks
+	for bytesWrittenTotal != dataLen {
+		bytesWritten, err := conn.Write(data[lwb:upb])
+		if err != nil {
+			return ErrConnection(err)
+		}
+		lwb = upb
+		if maxChunkSize+upb > dataLen {
+			upb = dataLen
+		} else {
+			upb += maxChunkSize
+		}
+		bytesWrittenTotal += bytesWritten
 	}
 
 	return
