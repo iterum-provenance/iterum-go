@@ -29,14 +29,14 @@ func (config Config) EnsureBucket(bucket string, retries int) (err error) {
 	// Check to see if we already own this bucket
 	exists, errBucketExists := config.Client.BucketExists(bucket)
 	if errBucketExists != nil {
-		return fmt.Errorf("Upload failed due to failure of bucket existence checking: '%v'", errBucketExists)
+		return fmt.Errorf("Failure of bucket existence checking: '%v'", errBucketExists)
 	} else if !exists {
 		log.Infof("Bucket '%v' does not exist, creating...\n", bucket)
 		errMakeBucket := config.Client.MakeBucket(bucket, "")
 		if errMakeBucket != nil {
 			if retries > 0 { // retry a number of times
 				time.Sleep(1 * time.Second)
-				log.Infof("Failed to create bucket '%v', retrying pullAndUpload...\n", bucket)
+				log.Infof("Failed to create bucket '%v', retrying...\n", bucket)
 				return config.EnsureBucket(bucket, retries-1)
 			}
 			return fmt.Errorf("Failed to create bucket '%v' due to: '%v'", bucket, errMakeBucket)

@@ -4,8 +4,7 @@ import (
 	"strconv"
 
 	"github.com/iterum-provenance/iterum-go/env"
-
-	"github.com/minio/minio-go"
+	minio "github.com/minio/minio-go"
 )
 
 const (

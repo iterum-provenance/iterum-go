@@ -13,14 +13,17 @@ import (
 // GetFile retrieves the file associated with the RemoteFileDesc onto local disk
 // It does not ensure any existing connection neither the bucket. This is the responsibility of the user
 // targetFolder is the folder in which to store the data
-func (config Config) GetFile(descriptor desc.RemoteFileDesc, targetFolder string) (localFile desc.LocalFileDesc, err error) {
+func (config Config) GetFile(descriptor desc.RemoteFileDesc, targetFolder string, checkBucket bool) (localFile desc.LocalFileDesc, err error) {
 	defer util.ReturnErrOnPanic(&err)()
 
 	if !config.IsConnected() {
 		return localFile, fmt.Errorf("Minio client not initialized, cannot get file")
 	}
-	err = config.EnsureBucket(descriptor.Bucket, 10)
-	util.PanicIfErr(err, "")
+
+	if checkBucket {
+		err = config.EnsureBucket(descriptor.Bucket, 10)
+		util.PanicIfErr(err, "")
+	}
 
 	localFilePath := descriptor.ToLocalPath(targetFolder)
 	err = config.Client.FGetObject(descriptor.Bucket, descriptor.RemotePath, localFilePath, config.GetOptions)
@@ -44,5 +47,5 @@ func (config Config) GetConfigFile(filename string) (localFile desc.LocalFileDes
 	if env.ProcessConfigPath == env.DataVolumePath {
 		log.Fatalf("EnvironmentError: '%v' is not a valid value for ITERUM_CONFIG_PATH", env.ProcessConfigPath)
 	}
-	return config.GetFile(descriptor, env.ProcessConfigPath)
+	return config.GetFile(descriptor, env.ProcessConfigPath, true)
 }
