@@ -1,9 +1,7 @@
 package minio
 
 import (
-	"strconv"
-
-	"github.com/iterum-provenance/iterum-go/env"
+	"github.com/iterum-provenance/iterum-go/process"
 	minio "github.com/minio/minio-go"
 )
 
@@ -12,7 +10,7 @@ const (
 	configPrefix string = "iterum_config"
 )
 
-var configBucket string = env.PipelineHash + "-iterum-config"
+var configBucket string = process.PipelineHash + "-iterum-config"
 
 // Config is a structure holding all relevant information regarding the minio storage used by Iterum
 type Config struct {
@@ -43,11 +41,7 @@ func NewMinioConfig(endpoint, accessKey, secretAccessKey, targetBucket string, u
 }
 
 // NewMinioConfigFromEnv uses environment variables to initialize a new MinioConfig configured for a step's output
-func NewMinioConfigFromEnv() (Config, error) {
-	endpoint := env.MinioURL
-	accessKeyID := env.MinioAccessKey
-	secretAccessKey := env.MinioSecretKey
-	useSSL, sslErr := strconv.ParseBool(env.MinioUseSSL)
-	targetBucket := env.MinioTargetBucket
-	return NewMinioConfig(endpoint, accessKeyID, secretAccessKey, targetBucket, useSSL), sslErr
+func NewMinioConfigFromEnv() Config {
+	// see env.go
+	return NewMinioConfig(URL, AccessKey, SecretKey, TargetBucket, UseSSL)
 }
