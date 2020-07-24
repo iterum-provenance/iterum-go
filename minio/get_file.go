@@ -2,6 +2,7 @@ package minio
 
 import (
 	"fmt"
+	"io"
 	"path"
 
 	desc "github.com/iterum-provenance/iterum-go/descriptors"
@@ -26,6 +27,7 @@ func (config Config) GetFile(descriptor desc.RemoteFileDesc, targetFolder string
 
 	localFilePath := descriptor.ToLocalPath(targetFolder)
 	err = config.Client.FGetObject(descriptor.Bucket, descriptor.RemotePath, localFilePath, config.GetOptions)
+
 	util.PanicIfErr(err, fmt.Sprintf("Download failed due to '%v'\n", err))
 
 	localFile = desc.LocalFileDesc{
@@ -34,6 +36,22 @@ func (config Config) GetFile(descriptor desc.RemoteFileDesc, targetFolder string
 	}
 
 	return
+}
+
+// GetFileAsReader retrieves the file associated with the passed RemoteFileDesc and returns it it as a readable object
+func (config Config) GetFileAsReader(descriptor desc.RemoteFileDesc, targetFolder string, checkBucket bool) (fhandle io.ReadCloser, err error) {
+	defer util.ReturnErrOnPanic(&err)()
+
+	if !config.IsConnected() {
+		return nil, fmt.Errorf("Minio client not initialized, cannot get file")
+	}
+
+	if checkBucket {
+		err = config.EnsureBucket(descriptor.Bucket, 10)
+		util.PanicIfErr(err, "")
+	}
+
+	return config.Client.GetObject(descriptor.Bucket, descriptor.RemotePath, config.GetOptions)
 }
 
 // GetConfigFile gets the file associated with filename from the minioStorage
