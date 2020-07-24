@@ -39,7 +39,7 @@ func (config Config) GetFile(descriptor desc.RemoteFileDesc, targetFolder string
 }
 
 // GetFileAsReader retrieves the file associated with the passed RemoteFileDesc and returns it it as a readable object
-func (config Config) GetFileAsReader(descriptor desc.RemoteFileDesc, targetFolder string, checkBucket bool) (fhandle io.ReadCloser, err error) {
+func (config Config) GetFileAsReader(descriptor desc.RemoteFileDesc, checkBucket bool) (fhandle io.ReadCloser, err error) {
 	defer util.ReturnErrOnPanic(&err)()
 
 	if !config.IsConnected() {
