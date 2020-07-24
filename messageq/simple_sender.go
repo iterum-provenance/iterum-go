@@ -4,10 +4,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/iterum-provenance/iterum-go/transmit"
-	"github.com/iterum-provenance/iterum-go/util"
 	"github.com/prometheus/common/log"
 	"github.com/streadway/amqp"
+
+	"github.com/iterum-provenance/iterum-go/transmit"
+	"github.com/iterum-provenance/iterum-go/util"
 )
 
 // SimpleSender is the structure that listens to a channel and redirects messages to rabbitMQ
@@ -30,6 +31,7 @@ func NewSimpleSender(toSend chan transmit.Serializable, brokerURL, targetQueue s
 	}
 }
 
+// spawnPublisher creates a new publisher for a specific queue using the same amqp Connection
 func (sender *SimpleSender) spawnPublisher(conn *amqp.Connection) {
 	ch, err := conn.Channel() // Eventually closed by the QPublisher
 	util.Ensure(err, "Opened channel")

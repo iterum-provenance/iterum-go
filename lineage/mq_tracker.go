@@ -4,10 +4,11 @@ import (
 	"sync"
 	"time"
 
+	"github.com/prometheus/common/log"
+
 	desc "github.com/iterum-provenance/iterum-go/descriptors"
 	"github.com/iterum-provenance/iterum-go/messageq"
 	"github.com/iterum-provenance/iterum-go/transmit"
-	"github.com/prometheus/common/log"
 )
 
 // MqTracker posts lineage information to a designated message queue queue

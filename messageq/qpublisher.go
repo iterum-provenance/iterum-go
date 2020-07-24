@@ -5,10 +5,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/iterum-provenance/iterum-go/transmit"
-	"github.com/iterum-provenance/iterum-go/util"
 	"github.com/prometheus/common/log"
 	"github.com/streadway/amqp"
+
+	"github.com/iterum-provenance/iterum-go/transmit"
+	"github.com/iterum-provenance/iterum-go/util"
 )
 
 // QPublisher is the structure that listens to a channel and publishes messages to rabbitMQ

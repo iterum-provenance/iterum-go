@@ -40,6 +40,8 @@ func NewListener(output, toAcknowledge chan transmit.Serializable, brokerURL, in
 	return
 }
 
+// messagesLeftChecker periodically asks the channel how many messages are left.
+// Once all messages are consumed, the Listener is allowed to initialize its finalization procedures
 func (listener *Listener) messagesLeftChecker(ch *amqp.Channel) {
 	var err error = nil
 	qChecker := amqp.Queue{Messages: 9999999} /// >0 init value. form of do-while
@@ -62,6 +64,7 @@ func (listener *Listener) messagesLeftChecker(ch *amqp.Channel) {
 func (listener *Listener) StartBlocking() {
 	wg := &sync.WaitGroup{}
 
+	// Setup connection and channel parameters
 	log.Infof("Connecting to %s.\n", listener.BrokerURL)
 	conn, err := amqp.Dial(listener.BrokerURL)
 	util.Ensure(err, "Connected to RabbitMQ")
@@ -81,9 +84,11 @@ func (listener *Listener) StartBlocking() {
 
 	listener.consumer.mqChannel = ch
 
+	// Start the two child routines of the listener
 	listener.consumer.Start(wg)
 	listener.acknowledger.Start(wg)
 
+	// Await exit signal from the UpstreamChecker
 	for listener.CanExit != nil || listener.exit != nil {
 		select {
 		case canExitOnEmpty := <-listener.CanExit:
@@ -107,7 +112,7 @@ func (listener *Listener) Start(wg *sync.WaitGroup) {
 	go func() {
 		defer wg.Done()
 		startTime := time.Now()
-        listener.StartBlocking()
-	    log.Infof("listener ran for %v", time.Now().Sub(startTime))
+		listener.StartBlocking()
+		log.Infof("listener ran for %v", time.Now().Sub(startTime))
 	}()
 }

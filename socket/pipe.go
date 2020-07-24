@@ -3,12 +3,11 @@ package socket
 import (
 	"sync"
 
-	"github.com/iterum-provenance/iterum-go/util"
-
 	"github.com/iterum-provenance/iterum-go/transmit"
+	"github.com/iterum-provenance/iterum-go/util"
 )
 
-// Pipe represents a bidirectional connection between an iterum sidecar and transformation step
+// Pipe represents a bidirectional connection between an iterum sidecar and user-defined container
 // ToTarget and FromTarget refer to the channels in the two sockets
 // Messages supposed to go towards Target can be put on ToTarget and message from the Target are put on FromTarget
 type Pipe struct {

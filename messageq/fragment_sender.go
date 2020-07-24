@@ -4,11 +4,12 @@ import (
 	"sync"
 	"time"
 
+	"github.com/prometheus/common/log"
+	"github.com/streadway/amqp"
+
 	desc "github.com/iterum-provenance/iterum-go/descriptors"
 	"github.com/iterum-provenance/iterum-go/transmit"
 	"github.com/iterum-provenance/iterum-go/util"
-	"github.com/prometheus/common/log"
-	"github.com/streadway/amqp"
 )
 
 // Sender is the structure that listens to a channel and redirects messages to rabbitMQ
@@ -37,6 +38,7 @@ func NewSender(toSend, toLineate chan transmit.Serializable, brokerURL, targetQu
 	return
 }
 
+// spawnPublisher creates a new publisher for a specific queue using the same amqp Connection
 func (sender *Sender) spawnPublisher(conn *amqp.Connection, targetQueue string) {
 	ch, err := conn.Channel() // Eventually closed by the QPublisher
 	util.Ensure(err, "Opened channel")

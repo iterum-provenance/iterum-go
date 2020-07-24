@@ -5,10 +5,11 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/prometheus/common/log"
+
 	"github.com/iterum-provenance/iterum-go/env"
 	"github.com/iterum-provenance/iterum-go/process"
 	"github.com/iterum-provenance/iterum-go/util"
-	"github.com/prometheus/common/log"
 )
 
 func init() {

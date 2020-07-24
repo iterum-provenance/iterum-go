@@ -1,11 +1,14 @@
+// Package process contains environment variables shared across Iterum pipeline instances.
+// It has basic variables such as the name of the transformation, the pipeline hash and the dataset
 package process
 
 import (
 	"os"
 	"path"
 
-	"github.com/iterum-provenance/iterum-go/env"
 	"github.com/prometheus/common/log"
+
+	"github.com/iterum-provenance/iterum-go/env"
 )
 
 func init() {

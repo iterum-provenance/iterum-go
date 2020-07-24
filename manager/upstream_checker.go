@@ -10,9 +10,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/iterum-provenance/iterum-go/util"
-
 	"github.com/prometheus/common/log"
+
+	"github.com/iterum-provenance/iterum-go/util"
 )
 
 type upstreamState struct {

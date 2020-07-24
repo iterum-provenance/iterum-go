@@ -4,8 +4,9 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/iterum-provenance/iterum-go/env"
 	"github.com/prometheus/common/log"
+
+	"github.com/iterum-provenance/iterum-go/env"
 )
 
 func init() {

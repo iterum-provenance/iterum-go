@@ -1,8 +1,9 @@
 package minio
 
 import (
-	"github.com/iterum-provenance/iterum-go/process"
 	minio "github.com/minio/minio-go"
+
+	"github.com/iterum-provenance/iterum-go/process"
 )
 
 const (

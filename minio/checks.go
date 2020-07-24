@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/minio/minio-go"
 	"github.com/prometheus/common/log"
+
+	"github.com/minio/minio-go"
 )
 
 // Connect tries to initialize the Client element of a minio config

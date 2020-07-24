@@ -6,10 +6,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/iterum-provenance/iterum-go/transmit"
-	"github.com/iterum-provenance/iterum-go/util"
 	"github.com/prometheus/common/log"
 	"github.com/streadway/amqp"
+
+	"github.com/iterum-provenance/iterum-go/transmit"
+	"github.com/iterum-provenance/iterum-go/util"
 )
 
 // Consumer consumes messages from the messagequeue without acknowledging them
@@ -34,6 +35,7 @@ func NewConsumer(out chan transmit.Serializable, mqChannel *amqp.Channel, inputQ
 	}
 }
 
+// handleRemoteFragment parses a fragment description out of the delivered message and sends it on
 func (consumer *Consumer) handleRemoteFragment(message amqp.Delivery) {
 	var mqFragment MqFragmentDesc
 	err := mqFragment.Deserialize(message.Body)

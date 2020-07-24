@@ -4,16 +4,17 @@ import (
 	"sync"
 	"time"
 
-	desc "github.com/iterum-provenance/iterum-go/descriptors"
-	"github.com/iterum-provenance/iterum-go/transmit"
 	"github.com/prometheus/common/log"
 	"github.com/streadway/amqp"
+
+	desc "github.com/iterum-provenance/iterum-go/descriptors"
+	"github.com/iterum-provenance/iterum-go/transmit"
 )
 
 // Acknowledger is responsible for sending acknowledgement messages to the MQBroker
 type Acknowledger struct {
 	acknowledge  <-chan transmit.Serializable    // *desc.FinishedFragmentMessage
-	pending      map[desc.IterumID]amqp.Delivery // unacknowledged
+	pending      map[desc.IterumID]amqp.Delivery // unacknowledged for now, backlog
 	consumed     <-chan amqp.Delivery
 	acknowledged int
 }
@@ -34,6 +35,7 @@ func (ack *Acknowledger) StartBlocking() {
 	for ack.consumed != nil || ack.acknowledge != nil {
 		select {
 		case msg, ok := <-ack.consumed:
+			// Each consume message is tracked using the backlog
 			if !ok {
 				ack.consumed = nil
 				continue
@@ -48,6 +50,7 @@ func (ack *Acknowledger) StartBlocking() {
 			}
 			ack.pending[mqFragment.Metadata.FragmentID] = msg
 		case msg, ok := <-ack.acknowledge:
+			// Each message denotes a fragment ready for acknowledgement
 			if !ok {
 				ack.acknowledge = nil
 				continue

@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 
 	desc "github.com/iterum-provenance/iterum-go/descriptors"
-
 	"github.com/iterum-provenance/iterum-go/transmit"
 )
 
